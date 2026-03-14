@@ -25,7 +25,6 @@ Resources:
       EvaluationPeriods: 1
       Threshold: 1
       ComparisonOperator: GreaterThanThreshold
-      AlarmActions: []
 
   GetItemsFunction:
     Type: AWS::Serverless::Function
@@ -34,11 +33,6 @@ Resources:
       Handler: index.handler
       CodeUri: functions/get-items/
       Tracing: Active
-      AutoPublishAlias: live
-      DeploymentPreference:
-        Type: Canary10Percent5Minutes
-        Alarms:
-          - !Ref LambdaErrorAlarm
       Policies:
         - DynamoDBCrudPolicy:
             TableName: items-table
@@ -56,11 +50,6 @@ Resources:
       Handler: index.handler
       CodeUri: functions/create-item/
       Tracing: Active
-      AutoPublishAlias: live
-      DeploymentPreference:
-        Type: Canary10Percent5Minutes
-        Alarms:
-          - !Ref LambdaErrorAlarm
       Policies:
         - DynamoDBCrudPolicy:
             TableName: items-table
