@@ -1,12 +1,15 @@
-export const handler = async (event) => {
+import { DynamoDBClient, ScanCommand } from "@aws-sdk/client-dynamodb";
 
-    const items = [
-        { id: 1, name: "item1" },
-        { id: 2, name: "item2" }
-    ];
+const client = new DynamoDBClient({});
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify(items)
-    };
+export const handler = async () => {
+
+  const data = await client.send(new ScanCommand({
+    TableName: "items-table"
+  }));
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify(data.Items)
+  };
 };

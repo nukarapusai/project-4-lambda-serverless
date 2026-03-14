@@ -1,14 +1,23 @@
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
+
+const client = new DynamoDBClient({});
+
 export const handler = async (event) => {
 
-    const body = JSON.parse(event.body);
+  const body = JSON.parse(event.body);
 
-    const item = {
-        id: Date.now(),
-        name: body.name
-    };
+  const item = {
+    id: { S: Date.now().toString() },
+    name: { S: body.name }
+  };
 
-    return {
-        statusCode: 201,
-        body: JSON.stringify(item)
-    };
+  await client.send(new PutItemCommand({
+    TableName: "items-table",
+    Item: item
+  }));
+
+  return {
+    statusCode: 201,
+    body: JSON.stringify({ message: "Item created" })
+  };
 };

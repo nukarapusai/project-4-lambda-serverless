@@ -3,12 +3,45 @@ Transform: AWS::Serverless-2016-10-31
 
 Resources:
 
+  ItemsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: items-table
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  LambdaErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions: []
+
   GetItemsFunction:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: nodejs20.x
       Handler: index.handler
       CodeUri: functions/get-items/
+      Tracing: Active
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: Canary10Percent5Minutes
+        Alarms:
+          - !Ref LambdaErrorAlarm
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: items-table
       Events:
         GetItemsApi:
           Type: Api
@@ -22,6 +55,15 @@ Resources:
       Runtime: nodejs20.x
       Handler: index.handler
       CodeUri: functions/create-item/
+      Tracing: Active
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: Canary10Percent5Minutes
+        Alarms:
+          - !Ref LambdaErrorAlarm
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: items-table
       Events:
         CreateItemApi:
           Type: Api
