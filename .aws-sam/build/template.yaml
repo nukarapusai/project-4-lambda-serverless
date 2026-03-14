@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  GetItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs20.x
+      Handler: index.handler
+      CodeUri: GetItemsFunction
+      Events:
+        GetItemsApi:
+          Type: Api
+          Properties:
+            Path: /items
+            Method: GET
+    Metadata:
+      SamResourceId: GetItemsFunction
+  CreateItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs20.x
+      Handler: index.handler
+      CodeUri: CreateItemFunction
+      Events:
+        CreateItemApi:
+          Type: Api
+          Properties:
+            Path: /items
+            Method: POST
+    Metadata:
+      SamResourceId: CreateItemFunction
+Outputs:
+  ApiEndpoint:
+    Description: API Gateway endpoint URL
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
