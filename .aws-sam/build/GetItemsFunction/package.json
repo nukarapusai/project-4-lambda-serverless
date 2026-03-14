@@ -1,8 +1,0 @@
-{
-  "name": "get-items",
-  "version": "1.0.0",
-  "description": "Lambda function to get items",
-  "type": "module",
-  "main": "index.mjs",
-  "license": "ISC"
-}
